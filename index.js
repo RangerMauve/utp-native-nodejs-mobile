@@ -54,7 +54,8 @@ UTP.prototype._init = function () {
     this._onmessage,
     this._onsend,
     this._onconnection,
-    this._onclose
+    this._onclose,
+    this._realloc
   )
 
   if (!this._refed) this.unref()
@@ -131,15 +132,15 @@ UTP.prototype._closeMaybe = function () {
 
 UTP.prototype.connect = function (port, ip) {
   if (!this._inited) this.bind()
-  const conn = new Connection(this, port, ip, null, this._allowHalfOpen)
   if (!ip) ip = '127.0.0.1'
+  const conn = new Connection(this, port, ip, null, this._allowHalfOpen)
   if (!isIP(ip)) conn._resolveAndConnect(port, ip)
   else conn._connect(port, ip || '127.0.0.1')
   return conn
 }
 
 UTP.prototype.listen = function (port, ip, onlistening) {
-  if (!this._inited) this.bind(port, ip, onlistening)
+  if (!this._address) this.bind(port, ip, onlistening)
   this.firewall(false)
 }
 
@@ -165,6 +166,7 @@ UTP.prototype.bind = function (port, ip, onlistening) {
   try {
     binding.utp_napi_bind(this._handle, port, ip)
   } catch (err) {
+    this._address = null
     process.nextTick(emitError, this, err)
     return
   }
@@ -179,6 +181,12 @@ UTP.prototype._resolveAndBind = function (port, host) {
     if (err) return self.emit('error', err)
     self.bind(port, ip)
   })
+}
+
+UTP.prototype._realloc = function () {
+  this._buffer = Buffer.allocUnsafe(this._buffer.length)
+  this._offset = 0
+  return this._buffer
 }
 
 UTP.prototype._onmessage = function (size, port, address) {
