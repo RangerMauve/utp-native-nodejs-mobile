@@ -20,7 +20,7 @@
       '-O3',
     ],
     'conditions': [
-      ['OS=="android"', {
+      ['OS=="android" or OS=="ios"', {
         'cflags': ['-fPIC'],
         'ldflags': ['-fPIC']
       }, {
