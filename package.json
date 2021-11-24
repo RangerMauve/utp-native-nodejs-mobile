@@ -9,19 +9,19 @@
     "test": "standard && tape test/net.js test/sockets.js",
     "fetch-libutp": "git submodule update --recursive --init",
     "prebuild": "prebuild --napi --all --strip --verbose",
-    "install": "prebuild-install || node-gyp rebuild",
+    "install": "prebuild-install || npm run fetch-libutp && node-gyp rebuild",
     "rebuild": "prebuild --compile"
   },
   "bin": {
-    "ucat": "./ucat.js"
+    "ucat": "ucat.js"
   },
   "engines": {
     "node": ">=8.12"
   },
   "dependencies": {
+    "bindings": "~1.5.0",
     "napi-macros": "^2.0.0",
     "prebuild-install": "^5.2.1",
-    "bindings": "~1.5.0",
     "readable-stream": "^3.0.2",
     "timeout-refresh": "^1.0.0",
     "unordered-set": "^2.0.1"
