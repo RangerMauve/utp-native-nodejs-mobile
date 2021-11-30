@@ -9,7 +9,7 @@
     "test": "standard && tape test/net.js test/sockets.js",
     "fetch-libutp": "git submodule update --recursive --init",
     "prebuild": "prebuild --napi --all --strip --verbose",
-    "install": "prebuild-install || npm run fetch-libutp && node-gyp rebuild",
+    "install": "prebuild-install || node-gyp rebuild",
     "rebuild": "prebuild --compile"
   },
   "bin": {
